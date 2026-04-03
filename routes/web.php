@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CaptivePortalController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\Organization\AdminDashboardController;
 use App\Http\Controllers\Organization\CampaignController;
 use App\Http\Controllers\Organization\CustomerReportController;
@@ -35,6 +36,9 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 Route::get('/dashboard', DashboardController::class)->middleware('auth')->name('dashboard');
+Route::get('/media/public/{path}', [MediaController::class, 'publicDisk'])
+    ->where('path', '.*')
+    ->name('media.public');
 
 Route::prefix('superadmin')
     ->name('superadmin.')

@@ -20,9 +20,9 @@
 <div class="wrap">
     <div class="card">
         @if($portal->logo_override_path)
-            <img src="{{ asset('storage/'.$portal->logo_override_path) }}" alt="portal logo" style="max-height: 70px;">
+            <img src="{{ $portal->logo_override_url }}" alt="portal logo" style="max-height: 70px;">
         @elseif($portal->organization->logo_path)
-            <img src="{{ asset('storage/'.$portal->organization->logo_path) }}" alt="org logo" style="max-height: 70px;">
+            <img src="{{ $portal->organization->logo_url }}" alt="org logo" style="max-height: 70px;">
         @endif
         <h1>{{ $portal->welcome_title }}</h1>
         <p class="muted">{{ $portal->welcome_text }}</p>

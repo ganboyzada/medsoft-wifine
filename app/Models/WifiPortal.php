@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\PublicMediaUrl;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -72,5 +73,10 @@ class WifiPortal extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    public function getLogoOverrideUrlAttribute(): ?string
+    {
+        return PublicMediaUrl::fromPublicDiskPath($this->logo_override_path);
     }
 }

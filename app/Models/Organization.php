@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\PublicMediaUrl;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -79,5 +80,10 @@ class Organization extends Model
             self::LANGUAGE_AZERBAIJANI,
             self::LANGUAGE_ENGLISH,
         ];
+    }
+
+    public function getLogoUrlAttribute(): ?string
+    {
+        return PublicMediaUrl::fromPublicDiskPath($this->logo_path);
     }
 }

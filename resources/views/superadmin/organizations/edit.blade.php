@@ -60,7 +60,7 @@
 
             @if($organization->logo_path)
                 <p class="muted">Current logo:</p>
-                <img src="{{ asset('storage/'.$organization->logo_path) }}" alt="current logo" style="max-height:80px;border-radius:8px;">
+                <img src="{{ $organization->logo_url }}" alt="current logo" style="max-height:80px;border-radius:8px;">
                 <label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
                     <input type="checkbox" style="width:auto;" name="remove_logo" value="1">
                     Remove current logo

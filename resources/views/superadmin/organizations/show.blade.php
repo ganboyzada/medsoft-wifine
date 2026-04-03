@@ -11,7 +11,7 @@
         <p class="muted">{{ $organization->slug }} | {{ $organization->timezone }} | {{ $organization->status }}</p>
         <p class="muted">{{ __('ui.default_language') }}: <strong>{{ strtoupper($organization->default_language ?? 'az') }}</strong></p>
         @if($organization->logo_path)
-            <img src="{{ asset('storage/'.$organization->logo_path) }}" alt="logo" style="max-height:80px;border-radius:8px;">
+            <img src="{{ $organization->logo_url }}" alt="logo" style="max-height:80px;border-radius:8px;">
         @endif
     </div>
 
