@@ -57,6 +57,40 @@
             </div>
             <label>Replace logo</label>
             <input type="file" name="logo" accept="image/*">
+
+            @if($organization->logo_path)
+                <p class="muted">Current logo:</p>
+                <img src="{{ asset('storage/'.$organization->logo_path) }}" alt="current logo" style="max-height:80px;border-radius:8px;">
+                <label style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+                    <input type="checkbox" style="width:auto;" name="remove_logo" value="1">
+                    Remove current logo
+                </label>
+            @endif
+
+            <hr style="margin: 18px 0; border:0; border-top: 1px solid #e5e7eb;">
+            <h3>Primary Organization Admin</h3>
+            <p class="muted">Superadmin can update the main organization admin profile from here.</p>
+            <div class="grid-3">
+                <div>
+                    <label>Admin name</label>
+                    <input type="text" name="admin_name" value="{{ old('admin_name', $primaryAdmin?->name) }}">
+                </div>
+                <div>
+                    <label>Admin email</label>
+                    <input type="email" name="admin_email" value="{{ old('admin_email', $primaryAdmin?->email) }}">
+                </div>
+                <div>
+                    <label>New admin password (optional)</label>
+                    <input type="password" name="admin_password">
+                </div>
+            </div>
+            <div class="grid-2">
+                <div>
+                    <label>Confirm new admin password</label>
+                    <input type="password" name="admin_password_confirmation">
+                </div>
+            </div>
+
             <button class="btn" type="submit">Save changes</button>
         </form>
     </div>

@@ -11,7 +11,7 @@
         .card { background: #fff; border: 1px solid #dbeafe; border-radius: 14px; padding: 16px; box-shadow: 0 8px 24px rgba(15, 23, 42, .07); }
         h1 { margin-top: 0; color: var(--brand); }
         input, select, textarea { width: 100%; border: 1px solid #d1d5db; border-radius: 8px; padding: 12px; margin: 6px 0 12px 0; }
-        .btn { width: 100%; border: 0; background: var(--brand); color: #fff; border-radius: 10px; padding: 13px; font-size: 16px; font-weight: 600; }
+        .btn { width: 100%; border: 0; background: var(--brand); color: #ffffff; border-radius: 10px; padding: 13px; font-size: 16px; font-weight: 650; }
         .muted { color: #6b7280; }
         .error { background: #fee2e2; border: 1px solid #fecaca; color: #991b1b; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
     </style>

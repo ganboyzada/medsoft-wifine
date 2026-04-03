@@ -9,7 +9,7 @@
         .card { width: min(460px, 92vw); background: #fff; border-radius: 16px; border: 1px solid #e5e7eb; padding: 24px; box-shadow: 0 12px 32px rgba(2, 8, 23, .08); }
         h1 { margin-top: 0; }
         input { width: 100%; border: 1px solid #d1d5db; border-radius: 8px; padding: 10px; margin-top: 6px; margin-bottom: 12px; }
-        button { width: 100%; border: 0; background: #0f766e; color: #fff; border-radius: 8px; padding: 12px; font-weight: 600; cursor: pointer; }
+        button { width: 100%; border: 0; background: #744487; color: #fff; border-radius: 8px; padding: 12px; font-weight: 650; cursor: pointer; }
         .err { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 8px; padding: 10px; margin-bottom: 12px; }
     </style>
 </head>

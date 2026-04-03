@@ -10,7 +10,7 @@
         h1 { color: #065f46; margin-top: 0; }
         .hint { color: #374151; }
         .campaign { border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px; margin-top: 14px; }
-        .btn { display: inline-block; background: #0f766e; color: #fff; text-decoration: none; border-radius: 8px; padding: 10px 12px; }
+        .btn { display: inline-block; background: #744487; color: #ffffff; text-decoration: none; border-radius: 8px; padding: 10px 12px; font-weight: 650; }
     </style>
 </head>
 <body>

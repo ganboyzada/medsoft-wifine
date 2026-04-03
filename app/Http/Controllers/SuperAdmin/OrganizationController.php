@@ -12,7 +12,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class OrganizationController extends Controller
@@ -182,11 +184,23 @@ class OrganizationController extends Controller
 
     public function edit(Organization $organization): View
     {
-        return view('superadmin.organizations.edit', compact('organization'));
+        $primaryAdmin = User::query()
+            ->where('organization_id', $organization->id)
+            ->where('role', User::ROLE_ORG_ADMIN)
+            ->orderBy('id')
+            ->first();
+
+        return view('superadmin.organizations.edit', compact('organization', 'primaryAdmin'));
     }
 
     public function update(Request $request, Organization $organization): RedirectResponse
     {
+        $primaryAdmin = User::query()
+            ->where('organization_id', $organization->id)
+            ->where('role', User::ROLE_ORG_ADMIN)
+            ->orderBy('id')
+            ->first();
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:150'],
             'slug' => ['required', 'alpha_dash', 'max:150', 'unique:organizations,slug,'.$organization->id],
@@ -199,27 +213,87 @@ class OrganizationController extends Controller
             'accent_color' => ['nullable', 'string', 'max:20'],
             'status' => ['required', 'in:active,suspended'],
             'logo' => ['nullable', 'image', 'max:2048'],
+            'remove_logo' => ['nullable', 'boolean'],
+            'admin_name' => ['nullable', 'string', 'max:120', 'required_with:admin_email'],
+            'admin_email' => [
+                'nullable',
+                'email',
+                'max:150',
+                'required_with:admin_name',
+                Rule::unique('users', 'email')->ignore($primaryAdmin?->id),
+            ],
+            'admin_password' => ['nullable', 'string', 'min:10', 'confirmed'],
         ]);
 
-        $organization->fill($validated);
+        DB::transaction(function () use ($request, $organization, $primaryAdmin, $validated): void {
+            $organization->fill([
+                'name' => $validated['name'],
+                'slug' => $validated['slug'],
+                'legal_name' => $validated['legal_name'] ?? null,
+                'contact_email' => $validated['contact_email'] ?? null,
+                'contact_phone' => $validated['contact_phone'] ?? null,
+                'timezone' => $validated['timezone'],
+                'default_language' => $validated['default_language'],
+                'primary_color' => $validated['primary_color'] ?? null,
+                'accent_color' => $validated['accent_color'] ?? null,
+                'status' => $validated['status'],
+            ]);
 
-        if ($request->hasFile('logo')) {
-            $organization->logo_path = $request->file('logo')->store('logos', 'public');
-        }
+            if ($request->boolean('remove_logo') && $organization->logo_path) {
+                Storage::disk('public')->delete($organization->logo_path);
+                $organization->logo_path = null;
+            }
 
-        $organization->save();
+            if ($request->hasFile('logo')) {
+                if ($organization->logo_path) {
+                    Storage::disk('public')->delete($organization->logo_path);
+                }
+
+                $organization->logo_path = $request->file('logo')->store('logos', 'public');
+            }
+
+            $organization->save();
+
+            $adminName = $validated['admin_name'] ?? null;
+            $adminEmail = $validated['admin_email'] ?? null;
+            $adminPassword = $validated['admin_password'] ?? null;
+
+            if ($primaryAdmin && ($adminName || $adminEmail || $adminPassword)) {
+                $primaryAdmin->name = $adminName ?: $primaryAdmin->name;
+                $primaryAdmin->email = $adminEmail ?: $primaryAdmin->email;
+
+                if ($adminPassword) {
+                    $primaryAdmin->password = Hash::make($adminPassword);
+                }
+
+                $primaryAdmin->save();
+            } elseif (! $primaryAdmin && $adminName && $adminEmail) {
+                User::query()->create([
+                    'organization_id' => $organization->id,
+                    'name' => $adminName,
+                    'email' => $adminEmail,
+                    'role' => User::ROLE_ORG_ADMIN,
+                    'password' => Hash::make($adminPassword ?: Str::random(16)),
+                    'is_active' => true,
+                ]);
+            }
+        });
 
         AuditTrail::record(
             action: 'superadmin.organization.updated',
             actor: $request->user(),
             organizationId: $organization->id,
             subject: $organization,
+            payload: [
+                'updated_primary_admin' => (bool) ($validated['admin_email'] ?? false),
+                'logo_removed' => $request->boolean('remove_logo'),
+            ],
             request: $request
         );
 
         return redirect()
             ->route('superadmin.organizations.show', $organization)
-            ->with('status', 'Organization updated successfully.');
+            ->with('status', 'Organization details updated successfully.');
     }
 
     public function destroy(Request $request, Organization $organization): RedirectResponse
